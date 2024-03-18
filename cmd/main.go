@@ -33,7 +33,12 @@ func main() {
 
 	count := Count{Count: 0}
 	e.Renderer = NewTemplate()
+
 	e.GET("/", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "index", count)
+	})
+
+	e.POST("/count", func(c echo.Context) error {
 		count.Count++
 		return c.Render(http.StatusOK, "index", count)
 	})
