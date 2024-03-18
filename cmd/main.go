@@ -2,7 +2,6 @@ package main
 
 import (
 	"io"
-	"net/http"
 	"text/template"
 
 	"github.com/labstack/echo/v4"
@@ -23,24 +22,51 @@ func NewTemplate() *Templates {
 	}
 }
 
-type Count struct {
-	Count int
+type Contact struct {
+	Name string
+	Email string
+}
+
+func newContact(name string, email string) Contact {
+	return Contact{
+		Name: name,
+		Email: email,
+	}
+}
+
+type Contacts = []Contact
+
+type Data struct {
+	Contacts Contacts
+}
+
+func newData() Data {
+	return Data{
+		Contacts: Contacts{
+			newContact("John Doe", "jdhn.doe@gmail.com"),
+			newContact("Jane Doe", "jane.doe@gmail.com"),
+		},
+	}
 }
 
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 
-	count := Count{Count: 0}
+	data := newData()
 	e.Renderer = NewTemplate()
 
 	e.GET("/", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "index", count)
+		return c.Render(200, "index", data)
 	})
 
-	e.POST("/count", func(c echo.Context) error {
-		count.Count++
-		return c.Render(http.StatusOK, "index", count)
+	e.POST("/contacts", func(c echo.Context) error {
+		name := c.FormValue("name")
+		email := c.FormValue("email")
+
+		data.Contacts = append(data.Contacts, newContact(name, email))
+
+		return c.Render(200, "index", data)
 	})
 
 	e.Logger.Fatal(e.Start(":42069"))
