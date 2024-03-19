@@ -1,0 +1,14 @@
+{{ block "display-contacts" . }}
+<div class="flex flex-col space-y-4" id="contacts">
+  {{ range .Contacts }}
+  <div class="bg-gray-100 p-4 rounded-lg">
+    <div class="text-lg font-bold">
+      Name : <span class="text-blue-500">{{ .Name }}</span>
+    </div>
+    <div class="text-lg font-bold">
+      Email : <span class="text-blue-500">{{ .Email }}</span>
+    </div>
+  </div>
+  {{ end }}
+</div>
+{{ end }}
